@@ -1,0 +1,8 @@
+
+
+class ChessBoard
+{
+public:
+	ChessBoard();
+
+};
