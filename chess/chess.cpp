@@ -105,8 +105,8 @@ bool Chess::doMove() {
 			if (checkMove(x1, y1, x2, y2))
 			{
 				
-				square* att = getSquare(x1, y1);
-				square* vic = getSquare(x2, y2);
+				Square* att = getSquare(x1, y1);
+				Square* vic = getSquare(x2, y2);
 				switch (vic->getPiece())
 				{
 				case KING:
