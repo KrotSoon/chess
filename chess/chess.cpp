@@ -1,7 +1,7 @@
 ﻿#include "chess.h"
 
 
-square::square()
+Square::Square()
 {
 	piece = EMPTY;
 	color = NONE;
@@ -9,36 +9,36 @@ square::square()
 	y = 0;
 }
 
-void square::setSpace(square* space)
+void Square::setSpace(Square* space)
 {
 	color = space->getColor();
 	piece = space->getPiece();
 }
 
-void square::setEmpty()
+void Square::setEmpty()
 {
 	color = NONE;
 	piece = EMPTY;
 }
 
-Piece square::getPiece()
+Piece Square::getPiece()
 {
 	return piece;
 }
 
-Color square::getColor()
+Color Square::getColor()
 {
 	return color;
 }
 
-void square::setPC(Piece p, Color c)
+void Square::setPC(Piece p, Color c)
 {
 	piece = p;
 	color = c;
 
 }
 
-void chess::printBoard() {
+void Chess::printBoard() {
 	using namespace std;
 	cout << "   x: a  b  c  d  e  f  g  h " << endl << "y:" << endl;
 	for (int i = 7; i >= 0; i--)
@@ -75,7 +75,7 @@ void chess::printBoard() {
 
 }
 
-bool chess::doMove() {
+bool Chess::doMove() {
 	using namespace std;
 	string move;
 	int x1, x2, y1, y2;
@@ -154,7 +154,7 @@ bool chess::doMove() {
 	return true;
 }
 
-void chess::setBoard()
+void Chess::setBoard()
 {
 	board[0][0].setPC(ROOK, WHITE);
 	board[1][0].setPC(KNIGHT, WHITE);
@@ -195,14 +195,14 @@ void chess::setBoard()
 
 }
 
-bool chess::play()
+bool Chess::play()
 {
 	system("cls");
 	printBoard();
 	return doMove();
 }
 
-bool chess::moveKing(square* king, square* space) 
+bool Chess::moveKing(Square* king, Square* space)
 {
 	int kingX = king->getX();
 	int kingY = king->getY();
@@ -216,7 +216,7 @@ bool chess::moveKing(square* king, square* space)
 		}
 		else return false;
 }
-bool chess::moveQueen(square* queen, square* space) {
+bool Chess::moveQueen(Square* queen, Square* space) {
 	int queenX = queen->getX();
 	int queenY = queen->getY();
 	int spaceX = space->getX();
@@ -271,7 +271,7 @@ bool chess::moveQueen(square* queen, square* space) {
 	return true;
 }
 
-bool chess::moveBishop(square* bishop, square* space) {
+bool Chess::moveBishop(Square* bishop, Square* space) {
 	int bishopX = bishop->getX();
 	int bishopY = bishop->getY();
 	int spaceX = space->getX();
@@ -296,7 +296,7 @@ bool chess::moveBishop(square* bishop, square* space) {
 	bishop->setEmpty();
 	return true;
 }
-bool chess::moveKnight(square* knight, square* space)
+bool Chess::moveKnight(Square* knight, Square* space)
 {
 	int knightX = knight->getX();
 	int knightY = knight->getY();
@@ -315,7 +315,7 @@ bool chess::moveKnight(square* knight, square* space)
 	}
 }
 
-bool chess::moveRook(square* rook, square* space)
+bool Chess::moveRook(Square* rook, Square* space)
 {
 	int rookX = rook->getX();
 	int rookY = rook->getY();
@@ -354,7 +354,7 @@ bool chess::moveRook(square* rook, square* space)
 	return true;
 }
 
-bool chess::movePawn(square* pawn, square* space) {
+bool Chess::movePawn(Square* pawn, Square* space) {
 	using namespace std;
 	int pawnX = pawn->getX();
 	int pawnY = pawn->getY();
@@ -404,7 +404,7 @@ bool chess::movePawn(square* pawn, square* space) {
 		else
 			return false;
 }
-bool chess::makeMove(square* att, square* vic) {
+bool Chess::makeMove(Square* att, Square* vic) {
 	switch (att->getPiece())
 	{
 	case KING: return moveKing(att, vic);
@@ -424,10 +424,10 @@ bool chess::makeMove(square* att, square* vic) {
 	}
 	return false;
 }
-bool chess::checkMove(int x1, int y1, int x2, int y2) {
+bool Chess::checkMove(int x1, int y1, int x2, int y2) {
 	using namespace std;
-	square* att = getSquare(x1, y1);
-	square* vic = getSquare(x2, y2);
+	Square* att = getSquare(x1, y1);
+	Square* vic = getSquare(x2, y2);
 	if (att->getColor() == vic->getColor() and vic->getColor() != NONE)
 	{
 		std::cout << "Invalid move: cannot land on your own piece" << std::endl;

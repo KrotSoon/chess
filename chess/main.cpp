@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-	chess game;
+	Chess game;
 	string tmp;
 	bool isgame = true;
 
