@@ -39,6 +39,7 @@ void Square::setPC(Piece p, Color c)
 }
 
 void Chess::printBoard() {
+	//Функция вывода текущего состояния шахматной доски в консоль
 	using namespace std;
 	cout << "   x: a  b  c  d  e  f  g  h " << endl << "y:" << endl;
 	for (int i = 7; i >= 0; i--)
@@ -51,6 +52,7 @@ void Chess::printBoard() {
 
 			switch (p)
 			{
+			//Конструкция swith-case для определения фигуры на клетке. Верхний регистр - белые фигуры, нижний регистр - черные фигуры.
 			case KING: (c == WHITE) ? cout << " K " : cout << " k ";
 				break;
 			case QUEEN: (c == WHITE) ? cout << " Q " : cout << " q ";
@@ -76,16 +78,19 @@ void Chess::printBoard() {
 }
 
 bool Chess::doMove() {
+	//Функция, которая реализовывает совершения хода. При ее выполнении программа будет запрашивать координаты и перемещать фигуры на доске
 	using namespace std;
 	string move;
 	int x1, x2, y1, y2;
 	bool globstop = false;
 	while (!globstop)
 	{
+		//Цикл, работающий до тех пор, пока не будет совершен ход
 		(turn == WHITE) ? cout << "White's turn" << endl : cout << "Black's turn" << endl;
 		bool cinstop = false;
 		while (!cinstop)
 		{
+			//Цикл, работающий до тех пор, пока не будут введены корректные координаты
 			cout << "Type in your move as a single four character string. The input should be of the form x1y1x2y2." << endl;
 			cin >> move;
 			if (move.length() == 4)
@@ -100,21 +105,26 @@ bool Chess::doMove() {
 		y1 = move[1] - 48;
 		x2 = move[2] - 97;
 		y2 = move[3] - 48;
-		Square* att = getSquare(x1, y1);
-		Square* vic = getSquare(x2, y2);
+		Square* att = getSquare(x1, y1); //Перемещаемая/атакующая фигура
+		Square* vic = getSquare(x2, y2); //Простанство/атакуемая фигура
 		if (att->getColor() == turn)
 		{
+			//Проверка на соответствие цвета атакующей фигуры цвету текущего игрока
 			if (!(att->getColor() == vic->getColor() and vic->getColor() != NONE))
 			{
+				//Проверка на атаку дружественной фигуры
 				
 				switch (vic->getPiece())
 				{
 				case KING:
+					//Если атакуют короля
 					if (att->getColor() == WHITE)
+						//Если атакуют короля белых
 					{
 						if (makeMove(att, vic))
 						{
-							cout << "WHITE WINS" << endl;
+							//Если ход возможен и был совершен
+							cout << "WHITE WINS" << endl; //Победа белых и завершение партии
 							return false;
 						}
 						else
@@ -122,9 +132,11 @@ bool Chess::doMove() {
 					}
 					else
 					{
+						//Если атакуют короля черных
 						if (makeMove(att, vic))
 						{
-							cout << "BLACK WINS" << endl;
+							//Если ход возможен и был совершен
+							cout << "BLACK WINS" << endl; //Победа черных и завершение партии
 							return false;
 						}
 						else
@@ -134,6 +146,7 @@ bool Chess::doMove() {
 				default:
 					if (makeMove(att, vic))
 					{
+						//Если ход возможен и был совершен
 						globstop = true;
 					}
 					else
@@ -147,7 +160,7 @@ bool Chess::doMove() {
 		else
 			cout << "That's not your piece. Try again." << endl;
 	}
-
+	//Переход хода следующему игроку
 	if (turn == BLACK)
 		turn = WHITE;
 	else
@@ -199,9 +212,9 @@ void Chess::setBoard()
 
 bool Chess::play()
 {
-	system("cls");
-	printBoard();
-	return doMove();
+	system("cls");		//Очищение консоли
+	printBoard();		//Вывод шахматной доски в консоль
+	return doMove();	//Возвращение необходимости продолжать игру, вернется false при завершении партии
 }
 
 bool Chess::moveKing(Square* king, Square* space)
@@ -211,9 +224,9 @@ bool Chess::moveKing(Square* king, Square* space)
 	int spaceX = space->getX();
 	int spaceY = space->getY();
 	if (( (abs(spaceX - kingX == 1) and (abs(spaceY - kingY) == 0)) or ((abs(spaceX - kingX) == 0) and (abs(spaceY - kingY) == 1)) or ((abs(spaceX - kingX) == 1) and (abs(spaceY - kingY) == 1))))
-		{
-			space->setSpace(king);
-			king->setEmpty();
+		{//Условия законности хода короля
+			space->setSpace(king); //Перемещение фигуры на клетку space
+			king->setEmpty();	   //Клетка перемещающейся фигуры становится свободной
 			return true;
 		}
 		else return false;
@@ -230,36 +243,36 @@ bool Chess::moveQueen(Square* queen, Square* space) {
 	{
 
 		if (queenX == spaceX)
-		{
-			yIncrement = (spaceY - queenY) / (abs(spaceY - queenY));
+		{//Движение по оси OY
+			yIncrement = (spaceY - queenY) / (abs(spaceY - queenY)); //Вычисление инкремента, для проверки наличия препятствий при движении вдоль оси OY
 			for (int i = queenY + yIncrement; i != spaceY; i += yIncrement)
 			{
 
-				if (board[spaceX][i].getColor() != NONE)
+				if (board[spaceX][i].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 					return false;
 
 			}
 		}
 		else
 			if (queenY == spaceY)
-			{
+			{//Движение по оси OX
 
-				xIncrement = (spaceX - queenX) / (abs(spaceX - queenX));
+				xIncrement = (spaceX - queenX) / (abs(spaceX - queenX)); //Вычисление инкремента, для проверки наличия препятствий при движении вдоль оси OX
 				for (int i = queenX + xIncrement; i != spaceX; i += xIncrement)
 				{
-					if (board[i][spaceY].getColor() != NONE)
+					if (board[i][spaceY].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 						return false;
 				}
 			}
 			else
 				if (abs(queenX - spaceX) == abs(queenY - spaceY))
-				{
-					xIncrement = (spaceX - queenX) / (abs(spaceX - queenX));
-					yIncrement = (spaceY - queenY) / (abs(spaceY - queenY));
+				{//Движение по диагонали
+					xIncrement = (spaceX - queenX) / (abs(spaceX - queenX)); //Вычисление инкремента, для проверки наличия препятствий при движении по диагонали
+					yIncrement = (spaceY - queenY) / (abs(spaceY - queenY)); //Вычисление инкремента, для проверки наличия препятствий при движении по диагонали
 
 					for (int i = 1; i < abs(queenX - spaceX); i++)
 					{
-						if (board[queenX + xIncrement*i][queenY + yIncrement*i].getColor() != NONE)
+						if (board[queenX + xIncrement*i][queenY + yIncrement*i].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 							return false;
 
 					}
@@ -268,8 +281,8 @@ bool Chess::moveQueen(Square* queen, Square* space) {
 					return false;
 	}
 
-	space->setSpace(queen);
-	queen->setEmpty();
+	space->setSpace(queen); //Перемещение фигуры на клетку space
+	queen->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 	return true;
 }
 
@@ -280,13 +293,13 @@ bool Chess::moveBishop(Square* bishop, Square* space) {
 	int spaceY = space->getY();
 
 	if (abs(bishopX - spaceX) == abs(bishopY - spaceY))
-	{
-		int xIncrement = (spaceX - bishopX) / (abs(spaceX - bishopX));
-		int yIncrement = (spaceY - bishopY) / (abs(spaceY - bishopY));
+	{//Движение по диагонали
+		int xIncrement = (spaceX - bishopX) / (abs(spaceX - bishopX)); //Вычисление инкремента, для проверки наличия препятствий при движении по диагонали
+		int yIncrement = (spaceY - bishopY) / (abs(spaceY - bishopY)); //Вычисление инкремента, для проверки наличия препятствий при движении по диагонали
 
 		for (int i = 1; i < abs(bishopX - spaceX); i++)
 		{
-			if (board[bishopX + xIncrement*i][bishopY + yIncrement*i].getColor() != NONE)
+			if (board[bishopX + xIncrement*i][bishopY + yIncrement*i].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 				return false;
 
 		}
@@ -294,8 +307,8 @@ bool Chess::moveBishop(Square* bishop, Square* space) {
 	else
 		return false;
 
-	space->setSpace(bishop);
-	bishop->setEmpty();
+	space->setSpace(bishop); //Перемещение фигуры на клетку space
+	bishop->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 	return true;
 }
 bool Chess::moveKnight(Square* knight, Square* space)
@@ -306,9 +319,9 @@ bool Chess::moveKnight(Square* knight, Square* space)
 	int spaceY = space->getY();
 
 	if ((abs(knightX - spaceX) == 2 and abs(knightY - spaceY) == 1) or (abs(knightX - spaceX) == 1 and abs(knightY - spaceY) == 2))
-	{
-		space->setSpace(knight);
-		knight->setEmpty();
+	{//Условия законности хода для коня
+		space->setSpace(knight); //Перемещение фигуры на клетку space
+		knight->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 		return true;
 	}
 	else
@@ -327,32 +340,32 @@ bool Chess::moveRook(Square* rook, Square* space)
 	{
 
 		if (rookX == spaceX)
-		{
-			int yIncrement = (spaceY - rookY) / (abs(spaceY - rookY));
+		{//Движение по оси OY
+			int yIncrement = (spaceY - rookY) / (abs(spaceY - rookY)); //Вычисление инкремента, для проверки наличия препятствий при движении вдоль оси OY
 			for (int i = rookY + yIncrement; i != spaceY; i += yIncrement)
 			{
 
-				if (board[spaceX][i].getColor() != NONE)
+				if (board[spaceX][i].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 					return false;
 
 			}
 		}
 		else
 			if (rookY == spaceY)
-			{
+			{//Движение по оси OX
 
-				int xIncrement = (spaceX - rookX) / (abs(spaceX - rookX));
+				int xIncrement = (spaceX - rookX) / (abs(spaceX - rookX)); //Вычисление инкремента, для проверки наличия препятствий при движении вдоль оси OX
 				for (int i = rookX + xIncrement; i != spaceX; i += xIncrement)
 				{
-					if (board[i][spaceY].getColor() != NONE)
+					if (board[i][spaceY].getColor() != NONE) //Если на пути движения фигуры присутствует препятствие
 						return false;
 				}
 			}
 			else
 				return false;
 	}
-	space->setSpace(rook);
-	rook->setEmpty();
+	space->setSpace(rook); //Перемещение фигуры на клетку space
+	rook->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 	return true;
 }
 
@@ -366,19 +379,19 @@ bool Chess::movePawn(Square* pawn, Square* space) {
 	Color spaceC = space->getColor();
 
 	if (pawnC == WHITE)
-	{
+	{//Если цвет пешки белый
 
 		if (pawnX == spaceX and spaceY == pawnY + 1 and spaceC == NONE)
-		{
-			space->setSpace(pawn);
-			pawn->setEmpty();
+		{//Движение по оси OY
+			space->setSpace(pawn); //Перемещение фигуры на клетку space
+			pawn->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 			return true;
 		}
 		else
 			if ((pawnX + 1 == spaceX or pawnX - 1 == spaceX) and pawnY + 1 == spaceY and spaceC == BLACK)
-			{
-				space->setSpace(pawn);
-				pawn->setEmpty();
+			{//Если ход совершается на вражескую фигуру по диагонали
+				space->setSpace(pawn); //Перемещение фигуры на клетку space
+				pawn->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 				return true;
 			}
 			else
@@ -386,18 +399,18 @@ bool Chess::movePawn(Square* pawn, Square* space) {
 	}
 	else
 		if (pawnC == BLACK)
-		{
+		{//Если цвет пешки черный
 			if (pawnX == spaceX and spaceY == pawnY - 1 and spaceC == NONE)
-			{
-				space->setSpace(pawn);
-				pawn->setEmpty();
+			{//Движение по оси OY
+				space->setSpace(pawn); //Перемещение фигуры на клетку space
+				pawn->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 				return true;
 			}
 			else
 				if ((pawnX + 1 == spaceX or pawnX - 1 == spaceX) and pawnY - 1 == spaceY and spaceC == WHITE)
-				{
-					space->setSpace(pawn);
-					pawn->setEmpty();
+				{//Если ход совершается на вражескую фигуру по диагонали
+					space->setSpace(pawn); //Перемещение фигуры на клетку space
+					pawn->setEmpty();      //Клетка перемещающейся фигуры становится свободной
 					return true;
 				}
 				else
@@ -408,7 +421,7 @@ bool Chess::movePawn(Square* pawn, Square* space) {
 }
 bool Chess::makeMove(Square* att, Square* vic) {
 	switch (att->getPiece())
-	{
+	{//Конструкция switch-case для определения перемещающейся фигуры и вызова соответствующей функции совершения хода
 	case KING: return moveKing(att, vic);
 		break;
 	case QUEEN: return moveQueen(att, vic);
@@ -421,7 +434,7 @@ bool Chess::makeMove(Square* att, Square* vic) {
 		break;
 	case PAWN: return movePawn(att, vic);
 		break;
-	case EMPTY: std::cout << "You do not have a piece there" << std::endl;  return false;
+	case EMPTY: std::cout << "You do not have a piece there" << std::endl;  return false; //Если на клетке нет фигуры
 		break;
 	}
 	return false;
