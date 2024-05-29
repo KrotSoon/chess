@@ -13,9 +13,9 @@ private:
 	Color color;
 	int x, y;
 public:
-	void setSpace(Square*);
+	void setSpace(Square* space);
 	void setEmpty();
-	void setPC(Piece, Color);
+	void setPC(Piece p, Color c);
 	Piece getPiece();
 	Color getColor();
 	void setX(int new_x) { x = new_x; }
@@ -37,7 +37,6 @@ private:
 	bool moveRook(Square* rook, Square* space);
 	bool movePawn(Square* pawn, Square* space);
 	bool makeMove(Square* att, Square* vic);
-	bool checkMove(int x1, int y1, int x2, int y2);
 	void printBoard();
 	Square* getSquare(int x, int y) {
 		return &board[x][y];

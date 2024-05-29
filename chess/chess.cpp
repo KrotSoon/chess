@@ -100,13 +100,13 @@ bool Chess::doMove() {
 		y1 = move[1] - 48;
 		x2 = move[2] - 97;
 		y2 = move[3] - 48;
-		if (getSquare(x1, y1)->getColor() == turn)
+		Square* att = getSquare(x1, y1);
+		Square* vic = getSquare(x2, y2);
+		if (att->getColor() == turn)
 		{
-			if (checkMove(x1, y1, x2, y2))
+			if (!(att->getColor() == vic->getColor() and vic->getColor() != NONE))
 			{
 				
-				Square* att = getSquare(x1, y1);
-				Square* vic = getSquare(x2, y2);
 				switch (vic->getPiece())
 				{
 				case KING:
@@ -141,6 +141,8 @@ bool Chess::doMove() {
 					break;
 				}
 			}
+			else
+				cout << "Invalid move: cannot land on your own piece" << endl;
 		}
 		else
 			cout << "That's not your piece. Try again." << endl;
@@ -424,14 +426,4 @@ bool Chess::makeMove(Square* att, Square* vic) {
 	}
 	return false;
 }
-bool Chess::checkMove(int x1, int y1, int x2, int y2) {
-	using namespace std;
-	Square* att = getSquare(x1, y1);
-	Square* vic = getSquare(x2, y2);
-	if (att->getColor() == vic->getColor() and vic->getColor() != NONE)
-	{
-		std::cout << "Invalid move: cannot land on your own piece" << std::endl;
-		return false;
-	}
-	return true;
-}
+
